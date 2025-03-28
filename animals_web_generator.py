@@ -8,25 +8,29 @@ def load_data(file_path):
 
 
 def generate_animal_info(animals):
-    """Generiert HTML-Inhalt für jedes Tier als <li> mit Fließtext"""
+    """Generiert HTML-Inhalt für jedes Tier im neuen Format"""
     output = ''  # leere Zeichenkette, die später mit den Tierinformationen gefüllt wird
     for animal in animals:
         animal_info = "<li class='cards__item'>"  # Beginn des <li>-Tags
 
         if "name" in animal:
-            animal_info += f"Name: {animal['name']}<br/>\n"
+            animal_info += f"<div class='card__title'>{animal['name']}</div>\n"
 
         if "characteristics" in animal:
             characteristics = animal["characteristics"]
 
+            animal_info += "<p class='card__text'>"
+
             if "diet" in characteristics:
-                animal_info += f"Diet: {characteristics['diet']}<br/>\n"
+                animal_info += f"<strong>Diet:</strong> {characteristics['diet']}<br/>\n"
 
             if "locations" in animal and animal["locations"]:
-                animal_info += f"Location: {animal['locations'][0]}<br/>\n"
+                animal_info += f"<strong>Location:</strong> {animal['locations'][0]}<br/>\n"
 
             if "type" in characteristics:
-                animal_info += f"Type: {characteristics['type']}<br/>\n"
+                animal_info += f"<strong>Type:</strong> {characteristics['type']}<br/>\n"
+
+            animal_info += "</p>"  # Ende des <p>-Tags
 
         animal_info += "</li>"  # Ende des <li>-Tags
         output += animal_info  # Füge das Tier der Gesamtliste hinzu
