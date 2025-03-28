@@ -11,22 +11,32 @@ def load_data(file_path):
 # Load the data from the JSON file
 animals_data = load_data('animals_data.json')
 
-# Iterate through the animals data and print the required information
+# Step 1: Read the content of the template HTML file
+with open('animals_template.html', 'r') as template_file:
+    template_content = template_file.read()
+
+# Step 2: Generate a string with the animals' data
+output = ''  # Define an empty string
 for animal in animals_data:
-    # Print Name if available
-    if 'name' in animal:
-        print(f"Name: {animal['name']}")
+    # Start with the Name
+    output += f"Name: {animal['name']}\n"
 
-    # Print Diet if available (from the 'characteristics' dictionary)
-    if 'characteristics' in animal and 'diet' in animal['characteristics']:
-        print(f"Diet: {animal['characteristics']['diet']}")
+    if 'characteristics' in animal:
+        if 'diet' in animal['characteristics']:
+            output += f"Diet: {animal['characteristics']['diet']}\n"
+        if 'type' in animal['characteristics']:
+            output += f"Type: {animal['characteristics']['type']}\n"
 
-    # Print Location if available
+    # Print Location (first location in the list)
     if 'locations' in animal and animal['locations']:
-        print(f"Location: {animal['locations'][0]}")
+        output += f"Location: {animal['locations'][0]}\n"
 
-    # Print Type if available (from the 'characteristics' dictionary)
-    if 'characteristics' in animal and 'type' in animal['characteristics']:
-        print(f"Type: {animal['characteristics']['type']}")
 
-    print()
+# Step 3: Replace __REPLACE_ANIMALS_INFO__ in the template with the output
+final_content = template_content.replace("__REPLACE_ANIMALS_INFO__", output)
+
+# Step 4: Write the new HTML content to a new file
+with open('animals.html', 'w') as output_file:
+    output_file.write(final_content)
+
+print("HTML file generated successfully as 'animals.html'.")
