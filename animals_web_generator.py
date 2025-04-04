@@ -1,66 +1,48 @@
-import json
+import requests
 
+def fetch_animal_data(animal_name):
+    url = "https://api.api-ninjas.com/v1/animals"
+    api_key = "gR/VxO32JnWUv555uz2nQQ==VZUv1hfXQQUH5XMz"
 
-def load_data(file_path):
-    """Lädt eine JSON-Datei"""
-    with open(file_path, "r") as handle:
-        return json.load(handle)
+    response = requests.get(
+        url,
+        params={"name": animal_name},
+        headers={"X-Api-Key": api_key}
+    )
 
+    if response.status_code == 200:
+        return response.json()
+    else:
+        print(f"Error: {response.status_code}")
+        return None
 
-def generate_animal_info(animals):
-    """Generiert HTML-Inhalt für jedes Tier im neuen Format"""
-    output = ''  # leere Zeichenkette, die später mit den Tierinformationen gefüllt wird
-    for animal in animals:
-        animal_info = "<li class='cards__item'>"  # Beginn des <li>-Tags
+def generate_html(animal_data, animal_name):
+    html_content = """
+    <html>
+    <head><title>Animal Info</title></head>
+    <body>
+    <h1>Animal Information</h1>
+    """
 
-        if "name" in animal:
-            animal_info += f"<div class='card__title'>{animal['name']}</div>\n"
+    if animal_data:
+        for animal in animal_data:
+           html_content += f"<h2>{animal.get('name', 'Unbekannt')}</h2>"
+           html_content += f"<p><strong>Klassifikation:</strong> {animal.get('classification', 'Nicht verfügbar')}</p>"
+           html_content += f"<p><strong>Ernährung:</strong> {animal.get('diet', 'Nicht verfügbar')}</p>"
+           html_content += f"<p><strong>Lebenserwartung:</strong> {animal.get('lifespan', 'Nicht verfügbar')}</p>"
+           html_content += f"<p><strong>Lebensraum:</strong> {animal.get('habitat', 'Nicht verfügbar')}</p>"
 
-        if "characteristics" in animal:
-            characteristics = animal["characteristics"]
+    else:
+        html_content += f"<h2>The animal \"{animal_name}\" doesn't exist.</h2>"
 
-            animal_info += "<p class='card__text'>"
+    html_content += "</body></html>"
 
-            if "diet" in characteristics:
-                animal_info += f"<strong>Diet:</strong> {characteristics['diet']}<br/>\n"
+    # Save the HTML file
+    with open("animals.html", "w") as file:
+        file.write(html_content)
+    print("Website was successfully generated to the file animals.html.")
 
-            if "locations" in animal and animal["locations"]:
-                animal_info += f"<strong>Location:</strong> {animal['locations'][0]}<br/>\n"
-
-            if "type" in characteristics:
-                animal_info += f"<strong>Type:</strong> {characteristics['type']}<br/>\n"
-
-            animal_info += "</p>"  # Ende des <p>-Tags
-
-        animal_info += "</li>"  # Ende des <li>-Tags
-        output += animal_info  # Füge das Tier der Gesamtliste hinzu
-
-    return output
-
-
-def create_html(template_path, animals_data):
-    """Erstellt eine neue HTML-Datei basierend auf der Vorlage und den Tierdaten"""
-    # Lese die Vorlage
-    with open(template_path, 'r') as template_file:
-        template_content = template_file.read()
-
-    # Generiere den HTML-Inhalt mit den Tierdaten
-    animals_info = generate_animal_info(animals_data)
-
-    # Ersetze den Platzhalter __REPLACE_ANIMALS_INFO__ durch die generierten Tierinformationen
-    updated_html = template_content.replace('__REPLACE_ANIMALS_INFO__', animals_info)
-
-    # Schreibe den neuen HTML-Inhalt in eine Datei
-    with open('animals.html', 'w') as output_file:
-        output_file.write(updated_html)
-
-    # Bestätigungsmeldung
-    print("HTML file 'animals.html' created successfully!")
-
-
-if __name__ == "__main__":
-    # Lade die Tierdaten aus der JSON-Datei
-    animals_data = load_data("animals_data.json")
-
-    # Erstelle die HTML-Datei mit den Tierdaten
-    create_html('animals_template.html', animals_data)
+# Mainpart
+animal_name = input("Enter a name of an animal: ")
+animal_data = fetch_animal_data(animal_name)
+generate_html(animal_data, animal_name)
