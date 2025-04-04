@@ -24,7 +24,7 @@ def generate_html(animal_data, animal_name):
         file.write(html_content)
     print("The website was successfully generated in the file animals.html.")
 
-# Ask the user for an animal name
+
 animal_name = input("Please enter an animal: ")
 # Fetch the data from the data fetcher
 animal_data = data_fetcher.fetch_data(animal_name)

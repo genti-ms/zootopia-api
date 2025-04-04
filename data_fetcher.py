@@ -1,19 +1,20 @@
+import os
 import requests
+from dotenv import load_dotenv
 
-# API Constants
-API_URL = "https://api.api-ninja.com/v1/animals"
-API_KEY = "gR/VxO32JnWUv555uz2nQQ==VZUv1hfXQQUH5XMz"
+# Load environment variables from the .env file
+load_dotenv()
+
+# Retrieve the API key from the environment variable
+API_KEY = os.getenv('API_KEY')
+
+# API URL
+API_URL = "https://api.example.com/data"
 
 def fetch_data(animal_name):
     """
-    Fetches the data for the animal 'animal_name' from the API.
-    Returns: A list of animals, each animal represented as a dictionary:
-    {
-        'name': ...,
-        'taxonomy': {...},
-        'locations': [...],
-        'characteristics': {...}
-    }
+    Fetches data for the given animal from the API.
+    Returns: List of animals (dictionaries).
     """
     response = requests.get(
         API_URL,
@@ -22,7 +23,12 @@ def fetch_data(animal_name):
     )
 
     if response.status_code == 200:
-        return response.json()  
+        return response.json() 
     else:
         print(f"Error fetching data: {response.status_code}")
         return []  
+
+#main
+animal_name = "fox"
+data = fetch_data(animal_name)
+print(data)
