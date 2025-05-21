@@ -1,50 +1,57 @@
 import data_fetcher
 
+def format_dict_to_html(d):
+    if not isinstance(d, dict):
+        return str(d)
+    html = "<ul>"
+    for key, value in d.items():
+        html += f"<li><strong>{key}:</strong> {value}</li>"
+    html += "</ul>"
+    return html
+
 def generate_html(animal_data, animal_name):
-    html_content = f"""
-    <html>
-    <head><title>Animal Information</title></head>
-    <body>
-    <h1>Animal Information for {animal_name}</h1>
-    """
+    # Read template file
+    with open("animal_templates.hhtml", "r") as f:
+        template = f.read()
+
+    animal_cards_html = ""
 
     if animal_data:
         for animal in animal_data:
-            html_content += f"<h2>{animal.get('name', 'Unknown')}</h2>"
-
-            taxonomy = animal.get('taxonomy', 'No taxonomy data available')
+            name = animal.get('name', 'Unknown')
+            taxonomy = format_dict_to_html(animal.get('taxonomy', {}))
+            characteristics = format_dict_to_html(animal.get('characteristics', {}))
             locations = animal.get('locations', [])
-            characteristics = animal.get('characteristics', 'No characteristics available')
-
             locations_str = ', '.join(locations) if locations else 'No locations available'
 
-            html_content += f"<p><strong>Taxonomy:</strong> {taxonomy}</p>"
-            html_content += f"<p><strong>Locations:</strong> {locations_str}</p>"
-            html_content += f"<p><strong>Characteristics:</strong> {characteristics}</p>"
+            card_html = f"""
+            <li class="cards__item">
+              <h2 class="card__title">{name}</h2>
+              <p><strong>Taxonomy:</strong> {taxonomy}</p>
+              <p><strong>Locations:</strong> {locations_str}</p>
+              <p><strong>Characteristics:</strong> {characteristics}</p>
+            </li>
+            """
+            animal_cards_html += card_html
     else:
-        # Show a nice message if no data is found
-        html_content += f"<h2 style='color: red;'>❌ The animal \"{animal_name}\" does not exist or was not found.</h2>"
+        animal_cards_html = f'<h2 style="color: red;">❌ The animal "{animal_name}" does not exist or was not found.</h2>'
 
-    html_content += """
-    </body>
-    </html>
-    """
+    # Replace placeholder with generated content
+    output_html = template.replace("__REPLACE_ANIMALS_INFO__", animal_cards_html)
 
-    with open("animals.html", "w") as file:
-        file.write(html_content)
-    print(f"✅ The website was successfully generated in animals.html.")
+    with open("animals.html", "w") as f:
+        f.write(output_html)
 
-# Main 
+    print("✅ The website was successfully generated in animals.html.")
+
+def main():
+    animal_name = input("Please enter an animal: ").strip()
+    if not animal_name:
+        print("❌ No animal name entered. Website was not generated.")
+        return
+
+    animal_data = data_fetcher.fetch_data(animal_name)
+    generate_html(animal_data, animal_name)
+
 if __name__ == "__main__":
-  animal_name = input("Please enter an animal: ").strip()
-
-  if not animal_name:
-     print("❌ No animal name entered. Website was not generated.")
-  else:
-      animal_data = data_fetcher.fetch_data(animal_name)
-
-      if animal_data:
-          generate_html(animal_data, animal_name)
-      else:
-          print(f"❌ No data found for \"{animal_name}\". Website was not generated.")
- 
+    main()
