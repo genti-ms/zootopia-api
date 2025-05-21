@@ -7,6 +7,9 @@ load_dotenv()
 
 API_KEY = os.getenv('API_KEY')
 
+if not API_KEY:
+    raise ValueError("API_KEY is not set. Please define it in the .env file.")
+
 API_URL = "https://api.api-ninjas.com/v1/animals"
 
 def fetch_data(animal_name):

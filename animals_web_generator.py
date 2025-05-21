@@ -11,7 +11,7 @@ def format_dict_to_html(d):
 
 def generate_html(animal_data, animal_name):
     # Read template file
-    with open("animal_templates.hhtml", "r") as f:
+    with open("animals_template.html", "r") as f:
         template = f.read()
 
     animal_cards_html = ""
