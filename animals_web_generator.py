@@ -1,6 +1,15 @@
 import data_fetcher
 
 def format_dict_to_html(d):
+    """
+    Converts a dictionary to an HTML unordered list.
+
+    Args:
+        d (dict): Dictionary to convert.
+
+    Returns:
+        str: HTML string representing the dictionary as a <ul> list.
+    """
     if not isinstance(d, dict):
         return str(d)
     html = "<ul>"
@@ -10,6 +19,13 @@ def format_dict_to_html(d):
     return html
 
 def generate_html(animal_data, animal_name):
+    """
+    Generates an HTML page based on animal data and writes it to 'animals.html'.
+
+    Args:
+        animal_data (list): A list of dictionaries containing animal information.
+        animal_name (str): The name of the animal queried by the user.
+    """
     # Read template file
     with open("animals_template.html", "r") as f:
         template = f.read()
@@ -45,6 +61,9 @@ def generate_html(animal_data, animal_name):
     print("✅ The website was successfully generated in animals.html.")
 
 def main():
+    """
+    Main function that prompts user input, fetches animal data, and generates the HTML page.
+    """
     animal_name = input("Please enter an animal: ").strip()
     if not animal_name:
         print("❌ No animal name entered. Website was not generated.")
